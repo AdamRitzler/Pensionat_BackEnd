@@ -1,4 +1,4 @@
 package org.example.pensionat_backend.Service;
 
-public class MyService {
+public class CustomerService {
 }
