@@ -5,18 +5,16 @@ import org.example.pensionat_backend.Repository.CustomerRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 //det här är bara för att jag skulle testa :)
 @Controller
 @RequestMapping("/html")
-public class Customercontroller {
+public class CustomerController {
     CustomerRepository customerRepository;
-    public Customercontroller(CustomerRepository customerRepo) {
+    public CustomerController(CustomerRepository customerRepo) {
         this.customerRepository = customerRepo;
     }
 
-    //Customer customer;
     Customer customer = new Customer();
 
     @GetMapping("/CustomerReg")
