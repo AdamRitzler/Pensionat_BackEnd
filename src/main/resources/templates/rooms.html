@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Rumsöversikt</title>
+</head>
+<body>
+<h2>Tillgängliga Rum</h2>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>Rumsnummer</th>
+    <th>Typ</th>
+    <th>Extrasängar</th>
+    <th>Tillgänglig</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="room : ${rooms}">
+    <td th:text="${room.roomNumber}"></td>
+    <td th:text="${room.roomType}"></td>
+    <td th:text="${room.maxExtraBeds}"></td>
+    <td th:text="${room.available ? 'Ja' : 'Nej'}"></td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
