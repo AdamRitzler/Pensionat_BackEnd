@@ -17,7 +17,12 @@ public class Room {
     private Long id;
 
     private String roomNumber;
-    private int beds;
+
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType;
+
+    private int maxExtraBeds;
+
     private boolean available;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)

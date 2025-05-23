@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Boka rum</title>
+</head>
+<body>
+<h2>Boka rum</h2>
+
+<p>Du bokar rum: <strong th:text="${room.roomNumber}"></strong></p>
+<p>Typ: <span th:text="${room.roomType}"></span></p>
+
+<!-- Här kan du lägga formulär med start- och slutdatum -->
+<form th:action="@{/book/create}" method="post">
+  <input type="hidden" name="roomId" th:value="${room.id}"/>
+
+  <label for="customerId">Kund ID:</label>
+  <input type="number" name="customerId" id="customerId" required><br>
+
+  <label for="startDate">Startdatum:</label>
+  <input type="date" name="startDate" id="startDate" required><br>
+
+  <label for="endDate">Slutdatum:</label>
+  <input type="date" name="endDate" id="endDate" required><br>
+
+  <button type="submit">Bekräfta bokning</button>
+</form>
+</body>
+</html>

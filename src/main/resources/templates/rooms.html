@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Rumsöversikt</title>
+</head>
+<body>
+<h2>Tillgängliga Rum</h2>
+<div th:if="${#lists.isEmpty(rooms)}">
+  <p style="color: red;">
+    ❌ Inga rum tillgängliga för <strong th:text="${guests}"></strong> gäster
+    mellan <strong th:text="${checkIn}"></strong> och
+    <strong th:text="${checkOut}"></strong>.
+    Alla passande rum är fullbokade eller för små.
+  </p>
+
+  <br>
+  <a th:href="@{/rooms/search}">
+    🔙 Tillbaka till sökning
+  </a>
+</div>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>Rumsnummer</th>
+    <th>Typ</th>
+    <th>Extrasängar</th>
+    <th>Tillgänglig</th>
+    <th>Välj</th>
+    <th>Bokade datum</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="room : ${rooms}">
+    <td th:text="${room.roomNumber}"></td>
+    <td th:text="${room.roomType}"></td>
+    <td th:text="${room.maxExtraBeds}"></td>
+    <td th:text="${room.available ? 'Ja' : 'Nej'}"></td>
+    <td><a th:href="@{/book/start(roomId=${room.id})}">Välj</a></td>
+    <td>
+      <ul>
+        <li th:each="booking : ${room.bookings}">
+          <span th:text="${booking.startDate}"></span> -
+          <span th:text="${booking.endDate}"></span>
+        </li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<br>
+<a th:href="@{/rooms/search}">🔍 Ny sökning</a>
+
+</body>
+</html>
