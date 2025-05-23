@@ -2,9 +2,11 @@ package org.example.pensionat_backend.Service;
 
 import org.example.pensionat_backend.DTO.BookingDTO;
 import org.example.pensionat_backend.Models.Booking;
+import org.example.pensionat_backend.Models.Room;
 import org.example.pensionat_backend.Repository.BookingRepository;
 import org.example.pensionat_backend.Repository.CustomerRepository;
 import org.example.pensionat_backend.Repository.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -74,23 +76,30 @@ public class BookingService {
         bookingRepository.deleteById(id);
     }
 
-    // Kontrollera om ett rum är tillgängligt (används vid ny bokning)
+    @Autowired
+    private RoomService roomService; // Se till att detta finns
+
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
-        List<Booking> bookings = bookingRepository.findByRoomId(roomId);
+        Room room = roomService.findById(roomId).orElseThrow();
+        List<Booking> bookings = room.getBookings();
+
         return bookings.stream().noneMatch(b ->
                 !(endDate.isBefore(b.getStartDate()) || startDate.isAfter(b.getEndDate()))
         );
     }
 
-    // Kontroll vid ändring – ignorera den bokning som ska ändras
+
     public boolean isRoomAvailableForUpdate(BookingDTO dto) {
-        List<Booking> bookings = bookingRepository.findByRoomId(dto.getRoomId());
+        Room room = roomService.findById(dto.getRoomId()).orElseThrow();
+        List<Booking> bookings = room.getBookings();
+
         return bookings.stream()
-                .filter(b -> !b.getId().equals(dto.getId()))
+                .filter(b -> !b.getId().equals(dto.getId())) // exkludera bokningen vi ska uppdatera
                 .noneMatch(b ->
                         !(dto.getEndDate().isBefore(b.getStartDate()) || dto.getStartDate().isAfter(b.getEndDate()))
                 );
     }
+
 
     // Konvertera till DTO
     private BookingDTO convertToDTO(Booking booking) {
