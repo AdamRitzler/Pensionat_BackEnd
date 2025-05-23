@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoomService {
@@ -32,7 +33,13 @@ public class RoomService {
 
     private boolean isAvailable(Room room, LocalDate from, LocalDate to) {
         // Lägg till bokningslogik senare
-        return true; //placeholder: Alla rum anses lediga
+        return room.getBookings().stream().noneMatch(booking ->
+                !(booking.getEndDate().isBefore(from) || booking.getStartDate().isAfter(to)));
     }
+
+    public Optional<Room> findById(Long id) {
+        return roomRepository.findById(id);
+    }
+
 
 }
