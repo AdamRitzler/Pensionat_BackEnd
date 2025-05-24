@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Startsida - Pensionat</title>
   <meta charset="UTF-8">
+  <title>Startsida - Pensionat</title>
 </head>
 <body>
+
 <h1>Hej och välkommen till vårt pensionat!</h1>
 
 <div>
-  <a th:href="@{/customers/new}">
+  <a th:href="@{/html/CustomerReg}">
     <button>Registrera kund</button>
   </a>
 </div>
@@ -20,9 +21,10 @@
 </div>
 
 <div>
-  <a th:href="@{/customers/edit}">
+  <a th:href="@{/html/CustomerReg}">
     <button>Ändra kunduppgifter</button>
   </a>
 </div>
+
 </body>
 </html>
