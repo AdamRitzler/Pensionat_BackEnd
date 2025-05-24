@@ -32,7 +32,7 @@ public class TestDataConfig {
 //
 //
 //
-//            Customer customer = new Customer(null, "Emma Test", "emma@mail.com", "0756799473");
+//            Customer customer = new Customer(null, "Emma Test", "emma@mail.com", "0756799473", "9805264559");
 //            customerRepository.save(customer);
 //
 //            Booking booking = new Booking(null,
