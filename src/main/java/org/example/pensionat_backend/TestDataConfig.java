@@ -29,6 +29,8 @@ public class TestDataConfig {
             Room room2 = new Room(null, "202", RoomType.DOUBLE, 2, true, null);
             roomRepository.saveAll(List.of(room1, room2));
 
+
+
             Customer customer = new Customer(null, "Emma Test", "emma@mail.com", "0756799473");
             customerRepository.save(customer);
 

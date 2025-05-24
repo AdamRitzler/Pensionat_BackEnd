@@ -30,6 +30,12 @@ public class Customer {
         @Pattern(regexp = "^\\d{7,15}$", message = "Telefonnummer måste bestå av 7 till 15 siffror")
         private String phone;
 
-        @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-        private List<Booking> bookings;
+       @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+       private List<Booking> bookings;
+
+        public Customer(Object o, String name, String mail, String number) {this.name = name;
+                this.email = mail;
+                this.phone = number;
+
+        }
 }
