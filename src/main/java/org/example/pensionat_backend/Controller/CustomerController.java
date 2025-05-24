@@ -37,6 +37,14 @@ public class CustomerController {
 
         return "Welcome";
     }
+    @Controller
+    public class HomeController {
+
+        @GetMapping("/Startsida")
+        public String home() {
+            return "startsida";
+        }
+    }
 
 //    @GetMapping("/Welcome")
 //    public String Welcome() {
