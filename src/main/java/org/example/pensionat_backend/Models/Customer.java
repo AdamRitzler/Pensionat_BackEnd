@@ -15,27 +15,34 @@ import java.util.List;
 @Builder
 public class Customer {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-        @NotBlank(message = "Namn måste anges")
-        private String name;
+    @NotBlank(message = "Namn måste anges")
+    private String name;
 
-        @Email(message = "Ogiltig emailadress")
-        @NotBlank(message = "Email måste anges")
-        @Column(unique = true)
-        private String email;
+    @Email(message = "Ogiltig emailadress")
+    @NotBlank(message = "Email måste anges")
+    @Column(unique = true)
+    private String email;
 
-        @Pattern(regexp = "^\\d{7,15}$", message = "Telefonnummer måste bestå av 7 till 15 siffror")
-        private String phone;
+    @Pattern(regexp = "^\\d{7,15}$", message = "Telefonnummer måste bestå av 7 till 15 siffror")
+    private String phone;
 
-       @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-       private List<Booking> bookings;
+    @Pattern(regexp = "^\\d{6}[-]?\\d{4}$", message = "ååmmddxxxx")
+    @NotBlank(message = "Personnummer får inte vara tomt")
+    @Column(unique = true)
+    private String ssn;
 
-        public Customer(Object o, String name, String mail, String number) {this.name = name;
-                this.email = mail;
-                this.phone = number;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Booking> bookings;
 
-        }
+    public Customer(Object o, String name, String mail, String number, String ssn) {
+        this.name = name;
+        this.email = mail;
+        this.phone = number;
+        this.ssn = ssn;
+
+    }
 }

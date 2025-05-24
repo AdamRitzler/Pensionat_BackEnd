@@ -7,7 +7,11 @@
 </head>
 <body>
 <h2> Välkommen, <span th:text="${name}">användare</span>!</h2>
+<p>Ditt kund id: <span th:text="${id}">kund id number</span> </p>
+<p>Ditt personnummer: <span th:text="${ssn}">personnummer</span> </p>
+<p>Din Email: <span th:text="${email}">Email</span> </p>
+<p>Ditt Telefonnummer: <span th:text="${phone}">Telefonnummer</span> </p>
 
-
+<a href="/Startsida"><button>tillbaka till startsidan</button></a>
 </body>
 </html>
