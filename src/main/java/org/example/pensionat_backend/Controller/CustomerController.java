@@ -16,7 +16,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/html")
 public class CustomerController {
-CustomerService customerService;
+    CustomerService customerService;
 
 
     public CustomerController(CustomerService customerService) {
@@ -41,15 +41,17 @@ CustomerService customerService;
         model.addAttribute("email", savedDto.getEmail());
         model.addAttribute("phone", savedDto.getPhone());
         model.addAttribute("ssn", savedDto.getSsn());
-        model.addAttribute("id", savedDto.getId() );
+        model.addAttribute("id", savedDto.getId());
 
         return "Welcome";
     }
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("customer", new CustomerDTO());
         return "CustomerReg"; // namnet på din HTML-sida
     }
+
     @Controller
     public class HomeController {
 
@@ -58,6 +60,7 @@ CustomerService customerService;
             return "startsida";
         }
     }
+
     @GetMapping("/Customerlist")
     public String listCustomers(Model model) {
         List<CustomerDTO> customers = customerService.findAll();
@@ -65,8 +68,17 @@ CustomerService customerService;
         return "CustomerList";
     }
 
+    @PostMapping("/deleteCustomer/{id}")
+    public String deleteCustomer(@PathVariable Long id) {
+        boolean deleted = customerService.deleteById(id);
+        if (!deleted) {
+            return "redirect:/html/Customerlist?error=Kunden har aktiva bokningar och kan inte tas bort.";
+        }
+        return "redirect:/html/Customerlist";
+
 //    @GetMapping("/Welcome")
 //    public String Welcome() {
 //        return "Welcome";
 //    }
+    }
 }
