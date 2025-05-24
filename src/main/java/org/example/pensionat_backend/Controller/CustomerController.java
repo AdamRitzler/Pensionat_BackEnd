@@ -1,7 +1,9 @@
 package org.example.pensionat_backend.Controller;
 
+import org.example.pensionat_backend.DTO.CustomerDTO;
 import org.example.pensionat_backend.Models.Customer;
 import org.example.pensionat_backend.Repository.CustomerRepository;
+import org.example.pensionat_backend.Service.CustomerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/html")
 public class CustomerController {
-    CustomerRepository customerRepository;
-    public CustomerController(CustomerRepository customerRepo) {
-        this.customerRepository = customerRepo;
+CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     Customer customer = new Customer();
@@ -29,11 +32,12 @@ public class CustomerController {
         model.addAttribute("email", email);
         model.addAttribute("phone", phone);
 
-        customer.setName(name);
-        customer.setEmail(email);
-        customer.setPhone(phone);
+        CustomerDTO dto = new CustomerDTO();
+        dto.setName(name);
+        dto.setEmail(email);
+        dto.setPhone(phone);
 
-        customerRepository.save(customer);
+        customerService.save(dto);
 
         return "Welcome";
     }
