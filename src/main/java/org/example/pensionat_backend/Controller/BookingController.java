@@ -83,6 +83,7 @@ public class BookingController {
 
     }
 
+
     @PostMapping("/edit")
     public String saveBookingUpdate(
             @Valid @ModelAttribute("booking") BookingDTO booking,
@@ -93,10 +94,26 @@ public class BookingController {
             redirectAttributes.addFlashAttribute("message", "❌ Formuläret innehåller fel. Försök igen.");
             redirectAttributes.addFlashAttribute("messageType", "error");
             return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret
-        }
+
+    @GetMapping("/edit")
+    public String showEditBookingList(Model model) {
+        List<BookingDTO> bookings = bookingService.getAllBookings();
+        model.addAttribute("bookings", bookings);
+        return "editBookingList";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        BookingDTO booking = bookingService.getBookingById(id);
+        model.addAttribute("booking", booking);
+        return "editBookingForm";
+    }
+
+   
 
         try {
             bookingService.updateBooking(booking);
+
             redirectAttributes.addFlashAttribute("message", "✅ Bokningen har uppdaterats.");
             redirectAttributes.addFlashAttribute("messageType", "success");
         } catch (Exception e) {
@@ -107,6 +124,7 @@ public class BookingController {
 
         return "redirect:/book/edit"; // Gå till listan
     }
+
 
 
 
