@@ -16,6 +16,7 @@ import java.util.List;
 
 @Configuration
 public class TestDataConfig {
+    /*
 
     @Bean
     CommandLineRunner loadTestData(
@@ -43,5 +44,9 @@ public class TestDataConfig {
 
             System.out.println("Testdata laddad: 2 rum, 1 kund, 1 bokning.");
         };
+
     }
+    
+     */
+
 }
