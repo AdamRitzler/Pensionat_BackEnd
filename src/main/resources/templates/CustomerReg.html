@@ -6,14 +6,21 @@
 </head>
 <body>
 <h2>Register Customer</h2>
-<form action="Welcome" method="post">
+<form th:action="@{Welcome}" th:object="${customer}" method="post">
     <label for="name">First name:</label><br>
-    <input type="text" id="name" name="name" value="John" required><br>
+    <input type="text" id="name" th:field="*{name}" value="John" required><br>
+    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+    <label for="ssn">personnummer:</label><br>
+    <input type="text" id="ssn" th:field="*{ssn}" pattern="\d{6}[-]?\d{4}" value="ååmmddxxxx" required><br>
+    <div th:if="${#fields.hasErrors('ssn')}" th:errors="*{ssn}"></div>
     <label for="email">Email:</label><br>
-    <input type="text" id="email" name="email" value="name@mail.com" required><br>
+    <input type="text" id="email" th:field="*{email}" value="name@mail.com" required><br>
+    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
     <label for="phone">phone:</label><br>
-    <input type="text" id="phone" name="phone" value="phonenumber" required><br><br>
+    <input type="text" id="phone" th:field="*{phone}" value="phonenumber" required><br>
+    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
 
+    <br>
     <input type="submit" value="Submit">
 </form>
 </body>

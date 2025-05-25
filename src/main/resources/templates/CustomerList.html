@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kundlista</title>
+</head>
+<body>
+<h1>Kundlista</h1>
+
+<!-- Felmeddelande -->
+<div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Namn</th>
+        <th>Email</th>
+        <th>Telefon</th>
+        <th>Personnummer</th>
+        <th>Ta bort</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="customer : ${customers}">
+        <td th:text="${customer.id}">1</td>
+        <td th:text="${customer.name}">Namn</td>
+        <td th:text="${customer.email}">epost</td>
+        <td th:text="${customer.phone}">123456</td>
+        <td th:text="${customer.ssn}">YYMMDD-XXXX</td>
+        <td>
+            <form th:action="@{/html/deleteCustomer/{id}(id=${customer.id})}" method="post">
+                <button type="submit">Ta bort</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

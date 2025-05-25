@@ -23,6 +23,7 @@ public class CustomerService {
         dto.setName(customer.getName());
         dto.setEmail(customer.getEmail());
         dto.setPhone(customer.getPhone());
+        dto.setSsn(customer.getSsn());
         return dto;
     }
 
@@ -33,6 +34,7 @@ public class CustomerService {
         customer.setName(dto.getName());
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());
+        customer.setSsn(dto.getSsn());
         return customer;
     }
 
@@ -57,4 +59,5 @@ public class CustomerService {
         customerRepository.deleteById(id);
         return true;
     }
+
 }
