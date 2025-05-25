@@ -94,6 +94,20 @@ public class BookingController {
             redirectAttributes.addFlashAttribute("message", "❌ Formuläret innehåller fel. Försök igen.");
             redirectAttributes.addFlashAttribute("messageType", "error");
             return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret
+        }
+        try {
+            bookingService.updateBooking(booking);
+
+            redirectAttributes.addFlashAttribute("message", "✅ Bokningen har uppdaterats.");
+            redirectAttributes.addFlashAttribute("messageType", "success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "❌ Fel: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret med fel
+        }
+
+        return "redirect:/book/edit"; // Gå till listan
+    }
 
     @GetMapping("/edit")
     public String showEditBookingList(Model model) {
@@ -109,23 +123,8 @@ public class BookingController {
         return "editBookingForm";
     }
 
-   
-
-        try {
-            bookingService.updateBooking(booking);
-
-            redirectAttributes.addFlashAttribute("message", "✅ Bokningen har uppdaterats.");
-            redirectAttributes.addFlashAttribute("messageType", "success");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "❌ Fel: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("messageType", "error");
-            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret med fel
-        }
-
-        return "redirect:/book/edit"; // Gå till listan
-    }
-
-
-
 
 }
+
+
+
