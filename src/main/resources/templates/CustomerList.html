@@ -31,6 +31,11 @@
         <td th:text="${customer.ssn}">YYMMDD-XXXX</td>
         <td>
             <form th:action="@{/html/deleteCustomer/{id}(id=${customer.id})}" method="post">
+                <button type="submit">Ändra uppgifter</button>
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/html/deleteCustomer/{id}(id=${customer.id})}" method="post">
                 <button type="submit">Ta bort</button>
             </form>
         </td>
