@@ -39,8 +39,18 @@ public class RoomController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut,
             Model model) {
 
+        if (checkIn.isBefore(LocalDate.now()) || checkOut.isBefore(checkIn)) {
+            model.addAttribute("error", "Ogiltigt datumintervall.");
+            return "searchRooms";
+        }
+
+
         List<Room> available = roomService.findAvailableRoomsFor(guests, checkIn, checkOut);
         model.addAttribute("rooms", available);
+        model.addAttribute("checkIn", checkIn);
+        model.addAttribute("checkOut", checkOut);
+        model.addAttribute("guests", guests);
+
         return "rooms";
     }
 

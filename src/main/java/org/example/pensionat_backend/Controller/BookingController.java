@@ -1,5 +1,6 @@
 package org.example.pensionat_backend.Controller;
 
+import jakarta.validation.Valid;
 import org.example.pensionat_backend.DTO.BookingDTO;
 import org.example.pensionat_backend.Models.Booking;
 import org.example.pensionat_backend.Models.Customer;
@@ -9,6 +10,7 @@ import org.example.pensionat_backend.Service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.example.pensionat_backend.Service.BookingService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -80,6 +82,32 @@ public class BookingController {
         return "redirect:/book/cancel";
 
     }
+
+    @PostMapping("/edit")
+    public String saveBookingUpdate(
+            @Valid @ModelAttribute("booking") BookingDTO booking,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("message", "❌ Formuläret innehåller fel. Försök igen.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret
+        }
+
+        try {
+            bookingService.updateBooking(booking);
+            redirectAttributes.addFlashAttribute("message", "✅ Bokningen har uppdaterats.");
+            redirectAttributes.addFlashAttribute("messageType", "success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "❌ Fel: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret med fel
+        }
+
+        return "redirect:/book/edit"; // Gå till listan
+    }
+
 
 
 }
