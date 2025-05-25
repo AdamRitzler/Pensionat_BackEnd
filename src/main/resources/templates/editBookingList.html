@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Ändra Bokning</title>
+  <style>
+    .success-msg {
+      color: green;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .error-msg {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+<h2>Välj en bokning att ändra</h2>
+
+<!-- Meddelande efter uppdatering -->
+<div th:if="${message}"
+     th:text="${message}"
+     th:classappend="${messageType == 'error'} ? 'error-msg' : 'success-msg'">
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Kund</th>
+    <th>Rum</th>
+    <th>Datum</th>
+    <th>Ändra</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="b : ${bookings}">
+    <td th:text="${b.id}"></td>
+    <td th:text="${b.customerId}"></td>
+    <td th:text="${b.roomId}"></td>
+    <td>
+      <span th:text="${b.startDate}"></span> - <span th:text="${b.endDate}"></span>
+    </td>
+    <td>
+      <a th:href="@{/book/edit/{id}(id=${b.id})}">Ändra</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<br>
+<a href="/Startsida"><button>Tillbaka till startsidan</button></a>
+</body>
+</html>

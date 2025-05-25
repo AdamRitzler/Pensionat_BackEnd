@@ -1,5 +1,6 @@
 package org.example.pensionat_backend.Controller;
 
+import jakarta.validation.Valid;
 import org.example.pensionat_backend.DTO.BookingDTO;
 import org.example.pensionat_backend.Models.Booking;
 import org.example.pensionat_backend.Models.Customer;
@@ -9,6 +10,7 @@ import org.example.pensionat_backend.Service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.example.pensionat_backend.Service.BookingService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -79,6 +81,40 @@ public class BookingController {
         }
         return "redirect:/book/cancel";
 
+    }
+
+    @GetMapping("/edit")
+    public String showEditBookingList(Model model) {
+        List<BookingDTO> bookings = bookingService.getAllBookings();
+        model.addAttribute("bookings", bookings);
+        return "editBookingList";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        BookingDTO booking = bookingService.getBookingById(id);
+        model.addAttribute("booking", booking);
+        return "editBookingForm";
+    }
+
+    @PostMapping("/edit")
+    public String saveBookingUpdate(@Valid @ModelAttribute("booking") BookingDTO booking,
+                                    BindingResult result,
+                                    RedirectAttributes redirectAttributes,
+                                    Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("booking", booking); // skickar tillbaka det användaren skrev
+            return "editBookingForm"; // går tillbaka till formuläret och visar felen
+        }
+
+        try {
+            bookingService.updateBooking(booking);
+            redirectAttributes.addFlashAttribute("message", "Bokningen har uppdaterats.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Fel: " + e.getMessage());
+        }
+
+        return "redirect:/book/edit";
     }
 
 
