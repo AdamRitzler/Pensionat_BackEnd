@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ändra Bokning</title>
+
+</head>
+<body>
+<h2>Ändra Bokning</h2>
+<form th:action="@{/book/edit}" th:object="${booking}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <label> Kund ID:</label>
+    <input type="number" th:field="*{customerId}" required><br>
+    <div th:if="${#fields.hasErrors('customerId')}" th:errors="*{customerId}" style="color:red"></div><br>
+
+
+    <label> Rum ID:</label>
+    <input type="number" th:field="*{roomId}" required><br>
+    <div th:if="${#fields.hasErrors('roomId')}" th:errors="*{roomId}" style="color:red"></div><br>
+
+    <label> Startdatum </label>
+    <input type="date" th:field="*{startDate}" required><br>
+    <div th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" style="color:red"></div><br>
+
+    <label> SlutDatum:</label>
+    <input type="date" th:field="*{endDate}" required><br>
+    <div th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" style="color:red"></div><br>
+
+    <button type="submit">Uppdatera</button>
+</form>
+
+<br>
+<a href="/book/edit"><button>Tillbaka till bokningslista</button></a>
+</body>
+</html>
