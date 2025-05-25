@@ -83,6 +83,18 @@ public class BookingController {
 
     }
 
+
+    @PostMapping("/edit")
+    public String saveBookingUpdate(
+            @Valid @ModelAttribute("booking") BookingDTO booking,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("message", "❌ Formuläret innehåller fel. Försök igen.");
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret
+
     @GetMapping("/edit")
     public String showEditBookingList(Model model) {
         List<BookingDTO> bookings = bookingService.getAllBookings();
@@ -97,25 +109,23 @@ public class BookingController {
         return "editBookingForm";
     }
 
-    @PostMapping("/edit")
-    public String saveBookingUpdate(@Valid @ModelAttribute("booking") BookingDTO booking,
-                                    BindingResult result,
-                                    RedirectAttributes redirectAttributes,
-                                    Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("booking", booking); // skickar tillbaka det användaren skrev
-            return "editBookingForm"; // går tillbaka till formuläret och visar felen
-        }
+   
 
         try {
             bookingService.updateBooking(booking);
-            redirectAttributes.addFlashAttribute("message", "Bokningen har uppdaterats.");
+
+            redirectAttributes.addFlashAttribute("message", "✅ Bokningen har uppdaterats.");
+            redirectAttributes.addFlashAttribute("messageType", "success");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Fel: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "❌ Fel: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("messageType", "error");
+            return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret med fel
         }
 
-        return "redirect:/book/edit";
+        return "redirect:/book/edit"; // Gå till listan
     }
+
+
 
 
 }

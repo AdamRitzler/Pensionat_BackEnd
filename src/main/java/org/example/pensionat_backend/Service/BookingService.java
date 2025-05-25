@@ -44,23 +44,20 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Bokning hittades inte"));
     }
 
-    // Skapa bokning (void-version, kan användas om du inte vill returnera bokning)
-    public void createBooking(BookingDTO dto) {
-        if (!isRoomAvailable(dto.getRoomId(), dto.getStartDate(), dto.getEndDate())) {
-            throw new RuntimeException("Rummet är inte tillgängligt för vald period.");
-        }
-
-        Booking booking = new Booking();
-        booking.setStartDate(dto.getStartDate());
-        booking.setEndDate(dto.getEndDate());
-        booking.setCustomer(customerRepository.findById(dto.getCustomerId()).orElseThrow(() -> new RuntimeException("Kund hittades inte")));
-        booking.setRoom(roomRepository.findById(dto.getRoomId()).orElseThrow(() -> new RuntimeException("Rum hittades inte")));
-
-        bookingRepository.save(booking);
-    }
-
     // Skapa bokning OCH returnera sparad Booking (denna ska du använda för bekräftelsevy)
     public Booking createBooking(Long roomId, Long customerId, LocalDate startDate, LocalDate endDate) {
+
+        // Datum får inte vara i det förflutna
+        if (startDate.isBefore(LocalDate.now())) {
+            throw new RuntimeException("Startdatum kan inte vara i det förflutna.");
+        }
+
+        // Slutdatum måste vara efter startdatum
+        if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
+            throw new RuntimeException("Slutdatum måste vara efter startdatum.");
+        }
+
+
         if (!isRoomAvailable(roomId, startDate, endDate)) {
             throw new RuntimeException("Rummet är inte tillgängligt för vald period.");
         }
@@ -68,8 +65,10 @@ public class BookingService {
         Booking booking = new Booking();
         booking.setStartDate(startDate);
         booking.setEndDate(endDate);
-        booking.setCustomer(customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Kund hittades inte")));
-        booking.setRoom(roomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Rum hittades inte")));
+        booking.setCustomer(customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Kund hittades inte")));
+        booking.setRoom(roomRepository.findById(roomId).
+                orElseThrow(() -> new RuntimeException("Rum hittades inte")));
 
         return bookingRepository.save(booking);
     }
@@ -81,16 +80,30 @@ public class BookingService {
 
     // Uppdatera bokning
     public void updateBooking(BookingDTO dto) {
-        Booking booking = bookingRepository.findById(dto.getId()).orElseThrow(() -> new RuntimeException("Bokning hittades inte"));
+        // Validering: Startdatum kan inte vara i det förflutna
+        if (dto.getStartDate().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Startdatum kan inte vara i det förflutna.");
+        }
 
+        // Validering: Slutdatum måste vara efter startdatum
+        if (dto.getEndDate().isBefore(dto.getStartDate()) || dto.getEndDate().equals(dto.getStartDate())) {
+            throw new RuntimeException("Slutdatum måste vara efter startdatum.");
+        }
+
+        // Kontrollera tillgänglighet för det uppdaterade intervallet
         if (!isRoomAvailableForUpdate(dto)) {
             throw new RuntimeException("Rummet är redan bokat för det datumet.");
         }
 
+        Booking booking = bookingRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Bokning hittades inte"));
+
         booking.setStartDate(dto.getStartDate());
         booking.setEndDate(dto.getEndDate());
-        booking.setCustomer(customerRepository.findById(dto.getCustomerId()).orElseThrow(() -> new RuntimeException("Kund hittades inte")));
-        booking.setRoom(roomRepository.findById(dto.getRoomId()).orElseThrow(() -> new RuntimeException("Rum hittades inte")));
+        booking.setCustomer(customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Kund hittades inte")));
+        booking.setRoom(roomRepository.findById(dto.getRoomId())
+                .orElseThrow(() -> new RuntimeException("Rum hittades inte")));
 
         bookingRepository.save(booking);
     }
