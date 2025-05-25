@@ -60,4 +60,10 @@ public class CustomerService {
         return true;
     }
 
+    public List<Customer> findCustomersWithBookings() {
+        return customerRepository.findAll().stream()
+                .filter(c -> c.getBookings() != null && !c.getBookings().isEmpty())
+                .toList();
+    }
+
 }

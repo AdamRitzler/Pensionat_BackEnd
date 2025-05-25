@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 //det här är bara för att jag skulle testa :)
 @Controller
@@ -75,10 +76,27 @@ public class CustomerController {
             return "redirect:/html/Customerlist?error=Kunden har aktiva bokningar och kan inte tas bort.";
         }
         return "redirect:/html/Customerlist";
+    }
 
-//    @GetMapping("/Welcome")
-//    public String Welcome() {
-//        return "Welcome";
-//    }
+    @PostMapping("/customer/edit/{id}")
+    public String changeInformation(@PathVariable Long id, Model model) {
+        Optional<CustomerDTO> customerDTO = Optional.of(new CustomerDTO());
+        customerDTO = customerService.findById(id);
+        if (customerDTO.isPresent()) {
+        model.addAttribute("customer", customerDTO.get());
+        return "editCustomer";
+        }
+        else {
+            return "redirect:/html/Customerlist?error=kund%20hittades%20inte";
+        }
+    }
+    @PostMapping("/customer/edit")
+    public String saveEditCustomer(@Valid @ModelAttribute("customer") CustomerDTO dto, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "editCustomer";
+        }
+        CustomerDTO updatedDto = customerService.save(dto);
+        model.addAttribute("message", "kund updaterad");
+        return "redirect:/html/Customerlist";
     }
 }

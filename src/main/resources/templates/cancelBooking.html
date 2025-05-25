@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Avboka Rum</title>
+</head>
+<body>
+<h2>Avboka Bokningar</h2>
+<div th:if="${message}" th:text="${message}"></div>
+<div th:each="customer : ${customers}">
+    <h3 th:text="|${customer.name} (${customer.email})|"></h3>
+
+    <ul>
+        <li th:each="booking : ${customer.bookings}">
+            <span th:text="'Bokning ID: ' + ${booking.id} + ' | Rum: ' + ${booking.room.roomNumber} + ' | ' + ${booking.startDate} + ' till ' + ${booking.endDate}"></span>
+            <form th:action="@{/book/cancel}" method="post" style="display:inline;">
+                <input type="hidden" name="bookingId" th:value="${booking.id}" />
+                <button type="submit">Avboka</button>
+            </form>
+        </li>
+    </ul>
+</div>
+<br>
+<a href="/Startsida"><button>tillbaka till startsidan</button></a>
+
+</body>
+</html>

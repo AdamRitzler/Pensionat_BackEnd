@@ -2,15 +2,19 @@ package org.example.pensionat_backend.Controller;
 
 import org.example.pensionat_backend.DTO.BookingDTO;
 import org.example.pensionat_backend.Models.Booking;
+import org.example.pensionat_backend.Models.Customer;
 import org.example.pensionat_backend.Models.Room;
+import org.example.pensionat_backend.Service.CustomerService;
 import org.example.pensionat_backend.Service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.example.pensionat_backend.Service.BookingService;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 @RequestMapping("/book")
@@ -18,10 +22,12 @@ public class BookingController {
 
     private final RoomService roomService;
     private final BookingService bookingService;
+    private final CustomerService customerService;
 
-    public BookingController(RoomService roomService, BookingService bookingService) {
+    public BookingController(RoomService roomService, BookingService bookingService, CustomerService customerService) {
         this.roomService = roomService;
         this.bookingService = bookingService;
+        this.customerService = customerService;
     }
 
     @GetMapping("/start")
@@ -55,4 +61,25 @@ public class BookingController {
 
         return "bookingConfirmation"; // Bekräftelsevy
     }
+
+    @GetMapping("/cancel")
+    public String showCustomersWithBookings(Model model) {
+        List<Customer> customersWithBookings = customerService.findCustomersWithBookings();
+        model.addAttribute("customers", customersWithBookings);
+        return "cancelBooking";
+    }
+
+    @PostMapping("/cancel")
+    public String cancelBooking(@RequestParam Long bookingId, RedirectAttributes redirectAttributes) {
+        try {
+            bookingService.deleteBooking(bookingId);
+            redirectAttributes.addFlashAttribute("message", "Bokningen avbokades.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Kunde inte avboka: " + e.getMessage());
+        }
+        return "redirect:/book/cancel";
+
+    }
+
+
 }

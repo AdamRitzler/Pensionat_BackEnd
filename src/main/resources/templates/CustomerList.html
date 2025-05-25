@@ -19,6 +19,7 @@
         <th>Email</th>
         <th>Telefon</th>
         <th>Personnummer</th>
+        <th>Ändra uppgifter</th>
         <th>Ta bort</th>
     </tr>
     </thead>
@@ -30,7 +31,7 @@
         <td th:text="${customer.phone}">123456</td>
         <td th:text="${customer.ssn}">YYMMDD-XXXX</td>
         <td>
-            <form th:action="@{/html/deleteCustomer/{id}(id=${customer.id})}" method="post">
+            <form th:action="@{/html/customer/edit/{id}(id=${customer.id})}" method="post">
                 <button type="submit">Ändra uppgifter</button>
             </form>
         </td>
@@ -42,5 +43,7 @@
     </tr>
     </tbody>
 </table>
+<br>
+<a href="/Startsida"><button>tillbaka till startsidan</button></a>
 </body>
 </html>
