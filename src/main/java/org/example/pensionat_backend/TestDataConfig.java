@@ -35,10 +35,16 @@ public class TestDataConfig {
             Room room4 = new Room(null, "204", RoomType.SINGLE, 0, true, null);
             Room room5 = new Room(null, "205", RoomType.DOUBLE, 1, true, null);
             Room room6 = new Room(null, "206", RoomType.SINGLE, 0, true, null);
-            roomRepository.saveAll(List.of(room1, room2));
+            roomRepository.saveAll(List.of(room1, room2, room3, room4, room5, room6));
 
             Customer customer = new Customer(null, "Emma Test", "emma@mail.com", "0756799473", "9805264559");
+            Customer customer2 = new Customer(null, "John Doe", "john@mail.com", "0736779494", "4405265555");
+            Customer customer3 = new Customer(null, "Jane Doe", "jane@mail.com", "0756767777", "5512097887");
+            Customer customer4 = new Customer(null, "Bengt Göran", "bengt@mail.com", "0705256565", "7803103212");
             customerRepository.save(customer);
+            customerRepository.save(customer2);
+            customerRepository.save(customer3);
+            customerRepository.save(customer4);
 
             Booking booking = new Booking(null,
                     LocalDate.of(2025,6,5),
@@ -47,6 +53,6 @@ public class TestDataConfig {
                     room2);
             bookingRepository.save(booking);
 
-            System.out.println("✅ Testdata laddad: 2 rum, 1 kund, 1 bokning.");
+            System.out.println("✅ Testdata laddad: alla rum, alla kunder, alla bokningar.");
         };
     }   }
