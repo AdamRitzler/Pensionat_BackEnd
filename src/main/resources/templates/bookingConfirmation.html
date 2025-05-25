@@ -7,24 +7,20 @@
 <body>
 <h2>Tack för din bokning!</h2>
 
-<!-- Kontrollera att room finns -->
 <div th:if="${room != null}">
     <p>Du har bokat rum nummer: <strong th:text="${room.roomNumber}">101</strong></p>
     <p>Rumstyp: <span th:text="${room.roomType}">SINGLE</span></p>
 </div>
 
-<!-- Fallback om room inte finns -->
 <div th:if="${room == null}">
     <p>Rumsinformation saknas.</p>
 </div>
 
-<!-- Booking-datum -->
 <div th:if="${booking != null}">
     <p>Check-in datum: <span th:text="${booking.startDate}">2025-06-05</span></p>
     <p>Check-out datum: <span th:text="${booking.endDate}">2025-06-10</span></p>
 </div>
 
-<!-- Kundinformation -->
 <div th:if="${customer != null}">
     <h3>Kundinformation</h3>
     <p>Namn: <span th:text="${customer.name}">Emma Test</span></p>

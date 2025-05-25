@@ -60,6 +60,12 @@ public class CustomerService {
         return true;
     }
 
+    public boolean customerHasBooking(Long id) {
+        return customerRepository.findById(id)
+                .map(c -> c.getBookings() != null && !c.getBookings().isEmpty())
+                .orElse(false);
+    }
+
     public List<Customer> findCustomersWithBookings() {
         return customerRepository.findAll().stream()
                 .filter(c -> c.getBookings() != null && !c.getBookings().isEmpty())
