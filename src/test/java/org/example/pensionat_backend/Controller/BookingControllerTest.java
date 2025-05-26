@@ -88,8 +88,8 @@ class BookingControllerTest {
                         .param("roomId", "1")
                         .param("startDate", "2025-06-01")
                         .param("endDate", "2025-06-05"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/book/confirmation"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("bookingConfirmation"));
     }
 
     @Test
