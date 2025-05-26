@@ -47,7 +47,7 @@ public class BookingController {
             @RequestParam Long roomId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            RedirectAttributes redirectAttributes
+            RedirectAttributes redirectAttributes,Model model
     ) {
         // Validering
         if (startDate.isBefore(LocalDate.now())) {
@@ -62,8 +62,8 @@ public class BookingController {
 
         try {
             Booking booking = bookingService.createBooking(roomId, customerId, startDate, endDate);
-            redirectAttributes.addFlashAttribute("message", "✅ Bokning skapad!");
-            return "redirect:/book/confirmation"; // eller annan vy du använder
+            model.addAttribute("room", roomService.findById(roomId).orElse(null));
+            return "bookingConfirmation"; // eller annan vy du använder
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("message", "❌ " + e.getMessage());
             return "redirect:/book/start?roomId=" + roomId;
