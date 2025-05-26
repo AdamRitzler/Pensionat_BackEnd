@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("Test")
+@ActiveProfiles("test")
 class CustomerControllerTest {
 
 
@@ -31,17 +31,18 @@ class CustomerControllerTest {
  .andExpect(model().attributeExists("customer"));
 
 }
-@Test
-void testSubmitValidCustomerForm() throws Exception {
-    mockMvc.perform(post("/html/Welcome")
-                    .param("name", "Test")
-                    .param("email", "testar123@example.com")
-                    .param("phone", "123456789")
-                    .param("ssn", "990316-1234"))
-            .andExpect(status().isOk())
-            .andExpect(view().name("Welcome"))
-            .andExpect(model().attribute("name", "Test"));
-}
+ @Test
+ void testSubmitValidCustomerForm() throws Exception {
+  mockMvc.perform(post("/html/Welcome")
+                  .param("name", "Testar " + System.currentTimeMillis()) // unikt namn
+                  .param("email", "testar" + System.currentTimeMillis() + "@example.com") // unik e-post
+                  .param("phone", "070" + (int)(Math.random() * 1000000)) // unik telefon
+                  .param("ssn", "850312-" + (int)(Math.random() * 9000 + 1000))) // enkel unik ssn
+          .andExpect(status().isOk())
+          .andExpect(view().name("Welcome"))
+          .andExpect(model().attributeExists("name"));
+ }
+
 @Test
  void testSubmitInvalidCustomerForm() throws Exception {
   mockMvc.perform(post("/html/Welcome")
