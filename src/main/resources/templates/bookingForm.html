@@ -7,25 +7,39 @@
 <body>
 <h2>Boka rum</h2>
 
-<p>Du bokar rum: <strong th:text="${room.roomNumber}"></strong></p>
-<p>Typ: <span th:text="${room.roomType}"></span></p>
+<!-- Visa meddelande -->
+<div th:if="${message}">
+  <p style="color:red;" th:text="${message}"></p>
+</div>
 
-<!-- Här kan du lägga formulär med start- och slutdatum -->
-<form th:action="@{/book/create}" method="post">
-  <input type="hidden" name="roomId" th:value="${room.id}"/>
+<!-- Felmeddelande om room saknas -->
+<div th:if="${room == null}">
+  <p style="color:red;">❌ Fel: Rumsinformation saknas. Gå tillbaka och välj ett rum.</p>
+  <a href="/rooms/search"><button>🔙 Till sökning</button></a>
+</div>
 
-  <label for="customerId">Kund ID:</label>
-  <input type="number" name="customerId" id="customerId" required><br>
+<!-- Visa bokningsformuläret endast om room finns -->
+<div th:if="${room != null}">
+  <p>Du bokar rum: <strong th:text="${room.roomNumber}"></strong></p>
+  <p>Typ: <span th:text="${room.roomType}"></span></p>
 
-  <label for="startDate">Startdatum:</label>
-  <input type="date" name="startDate" id="startDate" required><br>
+  <form th:action="@{/book/create}" method="post">
+    <input type="hidden" name="roomId" th:value="${room.id}"/>
 
-  <label for="endDate">Slutdatum:</label>
-  <input type="date" name="endDate" id="endDate" required><br>
+    <label for="customerId">Kund ID:</label>
+    <input type="number" name="customerId" id="customerId" required><br>
 
-  <button type="submit">Bekräfta bokning</button>
-</form>
+    <label for="startDate">Startdatum:</label>
+    <input type="date" name="startDate" id="startDate" required><br>
+
+    <label for="endDate">Slutdatum:</label>
+    <input type="date" name="endDate" id="endDate" required><br>
+
+    <button type="submit">Bekräfta bokning</button>
+  </form>
+</div>
+
 <br>
-<a href="/Startsida"><button>tillbaka till startsidan</button></a>
+<a href="/Startsida"><button>Tillbaka till startsidan</button></a>
 </body>
 </html>

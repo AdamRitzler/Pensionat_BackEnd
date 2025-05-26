@@ -6,6 +6,7 @@
 </head>
 <body>
 <h2>Sök lediga rum</h2>
+<p th:action="${error}" th:text="${error}" style="color:red"></p>
 
 <form th:action="@{/rooms/search/results}" method="get">
   <label>Antal gäster:</label>
