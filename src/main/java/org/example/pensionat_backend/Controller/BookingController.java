@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.util.List;
 
+
 @Controller
 @RequestMapping("/book")
 public class BookingController {
@@ -34,10 +35,11 @@ public class BookingController {
 
     @GetMapping("/start")
     public String showBookingForm(@RequestParam Long roomId, Model model) {
-        Room room = roomService.findById(roomId).orElseThrow();
+        Room room = roomService.findById(roomId).orElse(null);
         model.addAttribute("room", room);
-        return "bookingForm"; // Din bokningsform (HTML)
+        return "bookingForm";
     }
+
 
     @PostMapping("/create")
     public String createBooking(
@@ -45,24 +47,30 @@ public class BookingController {
             @RequestParam Long roomId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
-        BookingDTO dto = new BookingDTO(null, customerId, roomId, startDate, endDate);
-
-        try {
-            // Spara bokningen och få tillbaka objektet
-            Booking booking = bookingService.createBooking(roomId, customerId, startDate, endDate);
-
-            model.addAttribute("message", "✅ Bokning skapad!");
-            model.addAttribute("booking", booking);
-            model.addAttribute("room", booking.getRoom());
-            model.addAttribute("customer", booking.getCustomer());
-        } catch (RuntimeException e) {
-            model.addAttribute("message", "❌ " + e.getMessage());
+        // Validering
+        if (startDate.isBefore(LocalDate.now())) {
+            redirectAttributes.addFlashAttribute("message", "❌ Startdatum kan inte vara i det förflutna.");
+            return "redirect:/book/start?roomId=" + roomId;
         }
 
-        return "bookingConfirmation"; // Bekräftelsevy
+        if (!endDate.isAfter(startDate)) {
+            redirectAttributes.addFlashAttribute("message", "❌ Slutdatum måste vara efter startdatum.");
+            return "redirect:/book/start?roomId=" + roomId;
+        }
+
+        try {
+            Booking booking = bookingService.createBooking(roomId, customerId, startDate, endDate);
+            redirectAttributes.addFlashAttribute("message", "✅ Bokning skapad!");
+            return "redirect:/book/confirmation"; // eller annan vy du använder
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("message", "❌ " + e.getMessage());
+            return "redirect:/book/start?roomId=" + roomId;
+        }
     }
+
+
 
     @GetMapping("/cancel")
     public String showCustomersWithBookings(Model model) {
