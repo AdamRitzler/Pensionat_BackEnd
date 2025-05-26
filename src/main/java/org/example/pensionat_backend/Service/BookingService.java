@@ -115,14 +115,17 @@ public class BookingService {
 
     // Kontrollera om rum är tillgängligt för en ny bokning
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
-        Room room = roomService.findById(roomId).orElseThrow(() -> new RuntimeException("Rum hittades inte"));
-        List<Booking> bookings = room.getBookings();
+        Room room = roomRepository.findByIdWithBookings(roomId)
+                .orElseThrow(() -> new RuntimeException("Rum hittades inte"));
 
-        // Ingen bokning ska överlappa datumintervallet
+        List<Booking> bookings = room.getBookings();
+        System.out.println("Antal bokningar i rummet: " + bookings.size()); // Debug
+
         return bookings.stream().noneMatch(b ->
                 !(endDate.isBefore(b.getStartDate()) || startDate.isAfter(b.getEndDate()))
         );
     }
+
 
     // Kontrollera om rum är tillgängligt för uppdatering av bokning (exkluderar aktuell bokning)
     public boolean isRoomAvailableForUpdate(BookingDTO dto) {
