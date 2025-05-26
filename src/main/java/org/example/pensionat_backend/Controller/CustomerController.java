@@ -2,8 +2,6 @@ package org.example.pensionat_backend.Controller;
 
 import jakarta.validation.Valid;
 import org.example.pensionat_backend.DTO.CustomerDTO;
-import org.example.pensionat_backend.Models.Customer;
-import org.example.pensionat_backend.Repository.CustomerRepository;
 import org.example.pensionat_backend.Service.CustomerService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-//det här är bara för att jag skulle testa :)
+
 @Controller
 @RequestMapping("/html")
 public class CustomerController {
@@ -36,7 +34,7 @@ public class CustomerController {
                                     BindingResult result,
                                     Model model) {
         if (result.hasErrors()) {
-            return "CustomerReg"; // visa formuläret igen
+            return "CustomerReg";
         }
 
         try {

@@ -89,8 +89,8 @@ public class RoomServiceTest {
         customer.setEmail("test@example.com");
         customer.setPhone("1234567");
         customer.setSsn("9001011234");
-        customerRepository.save(customer); // 🟢 spara först
-        booking.setCustomer(customer); // sen koppla
+        customerRepository.save(customer);
+        booking.setCustomer(customer);
 
         room.getBookings().add(booking);
         roomRepository.save(room);

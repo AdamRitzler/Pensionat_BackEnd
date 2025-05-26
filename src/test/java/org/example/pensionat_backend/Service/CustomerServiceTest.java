@@ -105,9 +105,9 @@ class CustomerServiceTest {
         testCustomer.getBookings().add(booking);
         customerRepository.save(testCustomer);
 
-        bookingRepository.flush(); // 🧠 Skriv till databasen
+        bookingRepository.flush();
 
-        // 🧠 Läs om kunden så Hibernate hinner ladda bokningar
+
         testCustomer = customerRepository.findById(testCustomer.getId()).orElseThrow();
         System.out.println("Antal bokningar: " + testCustomer.getBookings().size());
 
@@ -132,10 +132,10 @@ class CustomerServiceTest {
         booking.setStartDate(LocalDate.now().plusDays(1));
         booking.setEndDate(LocalDate.now().plusDays(3));
 
-        // 👇 Synka relationen från Customer-hållet
+
         testCustomer.getBookings().add(booking);
 
-        // 👇 Spara båda – eftersom Cascade.ALL finns på Customer
+
         customerRepository.save(testCustomer);
 
         List<Customer> result = customerService.findCustomersWithBookings();

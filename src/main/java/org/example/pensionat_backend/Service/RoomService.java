@@ -33,12 +33,12 @@ public class RoomService {
 
 
     private boolean isAvailable(Room room, LocalDate from, LocalDate to) {
-        // Lägg till bokningslogik senare
+
         return room.getBookings().stream().noneMatch(booking ->
                 !(booking.getEndDate().isBefore(from) || booking.getStartDate().isAfter(to)));
     }
 
-    // RoomService.java
+
     public Optional<Room> findById(Long id) {
         return roomRepository.findByIdWithBookings(id);
     }

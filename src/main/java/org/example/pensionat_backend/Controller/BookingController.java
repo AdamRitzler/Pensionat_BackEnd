@@ -27,12 +27,13 @@ public class BookingController {
     private final BookingService bookingService;
     private final CustomerService customerService;
 
+    // Här injicerar vi våra services via konstruktorn
     public BookingController(RoomService roomService, BookingService bookingService, CustomerService customerService) {
         this.roomService = roomService;
         this.bookingService = bookingService;
         this.customerService = customerService;
     }
-
+    // Denna metod visar bokningsformuläret för ett visst rum
     @GetMapping("/start")
     public String showBookingForm(@RequestParam Long roomId, Model model) {
         Room room = roomService.findById(roomId).orElse(null);
@@ -40,7 +41,7 @@ public class BookingController {
         return "bookingForm";
     }
 
-
+    // Den här metoden hanterar själva bokningen och validerar datumen
     @PostMapping("/create")
     public String createBooking(
             @RequestParam Long customerId,
@@ -49,17 +50,20 @@ public class BookingController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             RedirectAttributes redirectAttributes,Model model
     ) {
-        // Validering
+
+        // Kontrollerar Startdatum får inte vara bakåt i tiden
         if (startDate.isBefore(LocalDate.now())) {
             redirectAttributes.addFlashAttribute("message", "❌ Startdatum kan inte vara i det förflutna.");
             return "redirect:/book/start?roomId=" + roomId;
         }
 
+        // Kontrollerar Slutdatum måste komma efter startdatum
         if (!endDate.isAfter(startDate)) {
             redirectAttributes.addFlashAttribute("message", "❌ Slutdatum måste vara efter startdatum.");
             return "redirect:/book/start?roomId=" + roomId;
         }
 
+        // Här försöker vi skapa bokningen, annars visas felmeddelande
         try {
             Booking booking = bookingService.createBooking(roomId, customerId, startDate, endDate);
             model.addAttribute("room", roomService.findById(roomId).orElse(null));
@@ -71,7 +75,7 @@ public class BookingController {
     }
 
 
-
+    // Visar en lista på kunder som har bokningar, används vid avbokning
     @GetMapping("/cancel")
     public String showCustomersWithBookings(Model model) {
         List<Customer> customersWithBookings = customerService.findCustomersWithBookings();
@@ -79,6 +83,7 @@ public class BookingController {
         return "cancelBooking";
     }
 
+    // Här hanterar vi avbokning av en bokning via boknings ID
     @PostMapping("/cancel")
     public String cancelBooking(@RequestParam Long bookingId, RedirectAttributes redirectAttributes) {
         try {
@@ -91,18 +96,21 @@ public class BookingController {
 
     }
 
-
+    // Den här metoden sparar uppdateringar av en bokning efter att man har redigerat den
     @PostMapping("/edit")
     public String saveBookingUpdate(
             @Valid @ModelAttribute("booking") BookingDTO booking,
             BindingResult result,
             RedirectAttributes redirectAttributes
     ) {
+        // Här kollar vi om formuläret har några fel
         if (result.hasErrors()) {
             redirectAttributes.addFlashAttribute("message", "❌ Formuläret innehåller fel. Försök igen.");
             redirectAttributes.addFlashAttribute("messageType", "error");
             return "redirect:/book/edit/" + booking.getId();  // Gå tillbaka till formuläret
         }
+
+        // Försöker uppdatera bokningen, annars visas felmeddelande
         try {
             bookingService.updateBooking(booking);
 
@@ -117,6 +125,7 @@ public class BookingController {
         return "redirect:/book/edit"; // Gå till listan
     }
 
+    // Visar alla bokningar som kan redigeras
     @GetMapping("/edit")
     public String showEditBookingList(Model model) {
         List<BookingDTO> bookings = bookingService.getAllBookings();
@@ -124,6 +133,7 @@ public class BookingController {
         return "editBookingList";
     }
 
+    // Den här metoden visar själva redigeringsformuläret för en bokning
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         BookingDTO booking = bookingService.getBookingById(id);

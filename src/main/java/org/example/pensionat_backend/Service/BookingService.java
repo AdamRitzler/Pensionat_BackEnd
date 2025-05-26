@@ -21,15 +21,17 @@ public class BookingService {
     private final RoomRepository roomRepository;
 
     @Autowired
-    private RoomService roomService; // Autowired RoomService, se till att den finns
+    private RoomService roomService;
 
+    // Konstruktor där vi injicerar repositories
     public BookingService(BookingRepository bookingRepository, CustomerRepository customerRepository, RoomRepository roomRepository) {
         this.bookingRepository = bookingRepository;
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
     }
 
-    // Hämta alla bokningar som DTO
+
+    // Hämtar alla bokningar och konverterar dem till BookingDTO
     public List<BookingDTO> getAllBookings() {
         return bookingRepository.findAll()
                 .stream()
@@ -37,20 +39,24 @@ public class BookingService {
                 .toList();
     }
 
-    // Hämta en bokning som DTO via ID
+
+    // Hämtar en specifik bokning med ID och konverterar till DTO
     public BookingDTO getBookingById(Long id) {
         return bookingRepository.findById(id)
                 .map(this::convertToDTO)
                 .orElseThrow(() -> new RuntimeException("Bokning hittades inte"));
     }
 
-    // Skapa bokning OCH returnera sparad Booking (denna ska du använda för bekräftelsevy)
+
+    // Skapar en ny bokning efter att ha validerat datum och tillgängligheten
     public Booking createBooking(Long roomId, Long customerId, LocalDate startDate, LocalDate endDate) {
 
-        // Datum får inte vara i det förflutna
+
+        // Startdatum får inte vara bakåt i tiden
         if (startDate.isBefore(LocalDate.now())) {
             throw new RuntimeException("Startdatum kan inte vara i det förflutna.");
         }
+
 
         // Slutdatum måste vara efter startdatum
         if (endDate.isBefore(startDate) || endDate.equals(startDate)) {
@@ -58,10 +64,12 @@ public class BookingService {
         }
 
 
+        // Rummet måste vara ledigt
         if (!isRoomAvailable(roomId, startDate, endDate)) {
             throw new RuntimeException("Rummet är inte tillgängligt för vald period.");
         }
 
+        // Om allt är okej så skapar vi bokningen
         Booking booking = new Booking();
         booking.setStartDate(startDate);
         booking.setEndDate(endDate);
@@ -73,28 +81,31 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    // Hämta bokning som Optional (kan användas t.ex. vid uppdatering eller visning)
+
+    // Försöker hitta en bokning med ett visst ID, returnerar tomt om den inte finns
     public Optional<Booking> findById(Long id) {
         return bookingRepository.findById(id);
     }
 
-    // Uppdatera bokning
+
+    // Uppdaterar en befintlig bokning med ny information från DTO
     public void updateBooking(BookingDTO dto) {
-        // Validering: Startdatum kan inte vara i det förflutna
+
         if (dto.getStartDate().isBefore(LocalDate.now())) {
             throw new RuntimeException("Startdatum kan inte vara i det förflutna.");
         }
 
-        // Validering: Slutdatum måste vara efter startdatum
+
         if (dto.getEndDate().isBefore(dto.getStartDate()) || dto.getEndDate().equals(dto.getStartDate())) {
             throw new RuntimeException("Slutdatum måste vara efter startdatum.");
         }
 
-        // Kontrollera tillgänglighet för det uppdaterade intervallet
+
         if (!isRoomAvailableForUpdate(dto)) {
             throw new RuntimeException("Rummet är redan bokat för det datumet.");
         }
 
+        // Hämtar och uppdaterar bokningen
         Booking booking = bookingRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Bokning hittades inte"));
 
@@ -108,12 +119,14 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-    // Ta bort bokning
+
+    // Tar bort en bokning med ID
     public void deleteBooking(Long id) {
         bookingRepository.deleteById(id);
     }
 
-    // Kontrollera om rum är tillgängligt för en ny bokning
+
+    // Kollar om ett rum är ledigt mellan två datum (används vid ny bokning)
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
         Room room = roomRepository.findByIdWithBookings(roomId)
                 .orElseThrow(() -> new RuntimeException("Rum hittades inte"));
@@ -121,25 +134,27 @@ public class BookingService {
         List<Booking> bookings = room.getBookings();
         System.out.println("Antal bokningar i rummet: " + bookings.size()); // Debug
 
+        // Returnerar true om inga bokningar överlappar
         return bookings.stream().noneMatch(b ->
                 !(endDate.isBefore(b.getStartDate()) || startDate.isAfter(b.getEndDate()))
         );
     }
 
 
-    // Kontrollera om rum är tillgängligt för uppdatering av bokning (exkluderar aktuell bokning)
+    // Kollar om rummet är ledigt vid uppdatering (ignorerar sin egen bokning)
     public boolean isRoomAvailableForUpdate(BookingDTO dto) {
         Room room = roomService.findById(dto.getRoomId()).orElseThrow(() -> new RuntimeException("Rum hittades inte"));
         List<Booking> bookings = room.getBookings();
 
         return bookings.stream()
-                .filter(b -> !b.getId().equals(dto.getId())) // exkludera aktuell bokning
+                .filter(b -> !b.getId().equals(dto.getId()))
                 .noneMatch(b ->
                         !(dto.getEndDate().isBefore(b.getStartDate()) || dto.getStartDate().isAfter(b.getEndDate()))
                 );
     }
 
-    // Hämta en bokning för kund + rum + exakt datum (om du vill)
+
+    // Hämtar senaste bokningen för kund och rum med samma datum
     public Optional<Booking> getLatestBookingForCustomerAndRoom(Long customerId, Long roomId, LocalDate startDate, LocalDate endDate) {
         return bookingRepository.findAll().stream()
                 .filter(b -> b.getCustomer().getId().equals(customerId))
@@ -148,7 +163,8 @@ public class BookingService {
                 .findFirst();
     }
 
-    // Hjälpmetod: konvertera Booking till BookingDTO
+
+    // Vi la till Hjälpmetod för att konvertera Booking till BookingDTO
     private BookingDTO convertToDTO(Booking booking) {
         return new BookingDTO(
                 booking.getId(),

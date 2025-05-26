@@ -23,7 +23,7 @@ public class TestDataConfig {
             BookingRepository bookingRepository
     ) {
         return args -> {
-            // Kontroll – om det redan finns rum, hoppa över allt
+
             if (roomRepository.count() > 0 || customerRepository.count() > 0 || bookingRepository.count() > 0) {
                 System.out.println("Testdata redan finns – hoppar över inladdning.");
                 return;

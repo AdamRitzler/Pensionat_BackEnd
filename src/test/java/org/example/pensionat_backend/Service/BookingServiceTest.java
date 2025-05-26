@@ -92,18 +92,18 @@ class BookingServiceTest {
         LocalDate start = LocalDate.now().plusDays(3);
         LocalDate end = start.plusDays(3);
 
-        // Skapa första bokningen
+
         bookingService.createBooking(testRoom.getId(), testCustomer.getId(), start, end);
 
-        // 🧠 Rensa persistence context så att data hämtas från DB
+
         entityManager.flush();
         entityManager.clear();
 
-        // Ladda om rummet med bokningar från databasen
+
         testRoom = roomRepository.findByIdWithBookings(testRoom.getId()).orElseThrow();
         System.out.println("Antal bokningar i rummet: " + testRoom.getBookings().size());
 
-        // Försök skapa överlappande bokning
+
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 bookingService.createBooking(testRoom.getId(), testCustomer.getId(), start.plusDays(1), end.plusDays(1)));
 
