@@ -86,8 +86,8 @@ class BookingControllerTest {
         mockMvc.perform(post("/book/create")
                         .param("customerId", "1")
                         .param("roomId", "1")
-                        .param("startDate", "2025-06-01")
-                        .param("endDate", "2025-06-05"))
+                        .param("startDate", "2026-06-01")
+                        .param("endDate", "2026-06-05"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("bookingConfirmation"));
     }
@@ -100,8 +100,8 @@ class BookingControllerTest {
         mockMvc.perform(post("/book/create")
                         .param("customerId", "1")
                         .param("roomId", "1")
-                        .param("startDate", "2025-06-01")
-                        .param("endDate", "2025-06-05"))
+                        .param("startDate", "2026-06-01")
+                        .param("endDate", "2026-06-05"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/book/start?roomId=1"));
     }

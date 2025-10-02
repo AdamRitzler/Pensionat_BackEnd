@@ -37,8 +37,8 @@ class RoomControllerTest {
     void testShowAvailableRooms() throws Exception {
         mockMvc.perform(get("/rooms/search/results")
                         .param("guests", "2")
-                        .param("checkIn", "2025-06-10")
-                        .param("checkOut", "2025-06-12"))
+                        .param("checkIn", "2026-06-10")
+                        .param("checkOut", "2026-06-12"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("rooms"))
                 .andExpect(model().attributeExists("rooms"));
