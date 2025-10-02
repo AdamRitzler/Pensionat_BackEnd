@@ -87,7 +87,7 @@ class BookingControllerTest {
                         .param("customerId", "1")
                         .param("roomId", "1")
                         .param("startDate", "2030-06-01")
-                        .param("endDate", "2030-06-05"))
+                        .param("endDate", "2030-06-10"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("bookingConfirmation"));
     }
