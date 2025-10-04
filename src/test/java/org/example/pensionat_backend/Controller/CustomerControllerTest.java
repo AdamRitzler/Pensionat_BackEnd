@@ -135,6 +135,17 @@ class CustomerControllerTest {
           .andExpect(model().attributeExists("customer"));
  }
 
+ @Test
+ void testChangeInformation_CustomerNotFound() throws Exception {
+  Long customerId = 99L;
+
+  given(customerService.findById(customerId)).willReturn(Optional.empty());
+
+  mockMvc.perform(post("/html/customer/edit/{id}", customerId))
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl("/html/Customerlist?error=kund%20hittades%20inte"));
+ }
+
 }
 
 
