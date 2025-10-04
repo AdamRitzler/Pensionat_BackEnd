@@ -107,7 +107,17 @@ class CustomerControllerTest {
   verify(customerService, Mockito.never()).deleteById(customerId);
  }
 
+ @Test
+ void testDeleteCustomer_NoActiveBooking() throws Exception {
+  Long customerId = 2L;
+  given(customerService.customerHasBooking(customerId)).willReturn(false);
 
+  mockMvc.perform(post("/html/deleteCustomer/{id}", customerId))
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl("/html/Customerlist"));
+
+  verify(customerService).deleteById(customerId);
+ }
 
 }
 
