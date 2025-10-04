@@ -11,10 +11,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mockito;
+import java.util.Optional;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -117,6 +118,21 @@ class CustomerControllerTest {
           .andExpect(redirectedUrl("/html/Customerlist"));
 
   verify(customerService).deleteById(customerId);
+ }
+
+ @Test
+ void testChangeInformation_CustomerFound() throws Exception {
+  Long customerId = 1L;
+  CustomerDTO mockCustomer = new CustomerDTO();
+  mockCustomer.setId(customerId);
+  mockCustomer.setName("Testperson");
+
+  given(customerService.findById(customerId)).willReturn(Optional.of(mockCustomer));
+
+  mockMvc.perform(post("/html/customer/edit/{id}", customerId))
+          .andExpect(status().isOk())
+          .andExpect(view().name("editCustomer"))
+          .andExpect(model().attributeExists("customer"));
  }
 
 }
