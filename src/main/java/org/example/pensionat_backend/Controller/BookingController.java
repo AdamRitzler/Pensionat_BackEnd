@@ -33,7 +33,7 @@ public class BookingController {
         this.bookingService = bookingService;
         this.customerService = customerService;
     }
-    // Denna metod visar bokningsformuläret för ett visst rum
+    // metod visar bokningsformuläret för ett visst rum
     @GetMapping("/start")
     public String showBookingForm(@RequestParam Long roomId, Model model) {
         Room room = roomService.findById(roomId).orElse(null);
@@ -140,7 +140,6 @@ public class BookingController {
         model.addAttribute("booking", booking);
         return "editBookingForm";
     }
-
 
 }
 
