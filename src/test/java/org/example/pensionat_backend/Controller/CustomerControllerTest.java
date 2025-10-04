@@ -1,13 +1,20 @@
 package org.example.pensionat_backend.Controller;
 
+import org.example.pensionat_backend.DTO.CustomerDTO;
+import org.example.pensionat_backend.Service.CustomerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.Mockito;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -22,6 +29,9 @@ class CustomerControllerTest {
 
  @Autowired
  private MockMvc mockMvc;
+
+ @MockitoBean
+ private CustomerService customerService;
 
 @Test
  void testShowCustomerForm() throws Exception{
@@ -59,6 +69,46 @@ class CustomerControllerTest {
           .andExpect(view().name("CustomerList"))
           .andExpect(model().attributeExists("customers"));
  }
+
+
+ private CustomerDTO sampleDto(Long id) {
+  CustomerDTO dto = new CustomerDTO();
+  dto.setId(id);
+  dto.setName("Anna Andersson");
+  dto.setEmail("anna@example.com");
+  dto.setPhone("0701234567");
+  dto.setSsn("850312-1234");
+  return dto;
+ }
+
+ @Test
+ void showRegisterForm() throws Exception {
+  mockMvc.perform(get("/html/register"))
+          .andExpect(status().isOk())
+          .andExpect(view().name("CustomerReg"))
+          .andExpect(model().attributeExists("customer"));
+ }
+
+ @Test
+ void startsida() throws Exception {
+  mockMvc.perform(get("/Startsida"))
+          .andExpect(status().isOk())
+          .andExpect(view().name("startsida"));
+ }
+
+ @Test
+ void testDeleteCustomer_WithActiveBooking() throws Exception {
+  Long customerId = 1L;
+  given(customerService.customerHasBooking(customerId)).willReturn(true);
+  mockMvc.perform(post("/html/deleteCustomer/{id}", customerId))
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl("/html/Customerlist?error=Kunden har aktiva bokningar och kan inte tas bort."));
+
+  verify(customerService, Mockito.never()).deleteById(customerId);
+ }
+
+
+
 }
 
 
