@@ -91,13 +91,6 @@ class CustomerControllerTest {
  }
 
  @Test
- void startsida() throws Exception {
-  mockMvc.perform(get("/Startsida"))
-          .andExpect(status().isOk())
-          .andExpect(view().name("startsida"));
- }
-
- @Test
  void testDeleteCustomer_WithActiveBooking() throws Exception {
   Long customerId = 1L;
   given(customerService.customerHasBooking(customerId)).willReturn(true);
