@@ -146,6 +146,26 @@ class CustomerControllerTest {
           .andExpect(redirectedUrl("/html/Customerlist?error=kund%20hittades%20inte"));
  }
 
+ @Test
+ void testSaveEditCustomer_Valid() throws Exception {
+  CustomerDTO dto = new CustomerDTO();
+  dto.setId(1L);
+  dto.setName("Uppdaterad Kund");
+
+  given(customerService.save(Mockito.any(CustomerDTO.class))).willReturn(dto);
+
+  mockMvc.perform(post("/html/customer/edit")
+                  .param("id", "1")
+                  .param("name", "Uppdaterad Kund")
+                  .param("email", "update@example.com")
+                  .param("phone", "0701234567")
+                  .param("ssn", "850101-1234"))
+          .andExpect(status().is3xxRedirection())
+          .andExpect(redirectedUrl("/html/Customerlist"));
+
+  verify(customerService).save(Mockito.any(CustomerDTO.class));
+ }
+
 }
 
 
