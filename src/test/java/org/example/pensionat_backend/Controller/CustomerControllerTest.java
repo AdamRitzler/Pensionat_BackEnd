@@ -13,9 +13,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mockito;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +46,13 @@ class CustomerControllerTest {
 }
  @Test
  void testSubmitValidCustomerForm() throws Exception {
+  when(customerService.save(any(CustomerDTO.class)))
+          .thenAnswer(invocation -> {
+           CustomerDTO dto = invocation.getArgument(0);
+           dto.setId(1L); // låtsas att den sparades
+           return dto;
+          });
+
   mockMvc.perform(post("/html/Welcome")
                   .param("name", "Testar " + System.currentTimeMillis()) // unikt namn
                   .param("email", "testar" + System.currentTimeMillis() + "@example.com") // unik e-post
@@ -71,16 +80,6 @@ class CustomerControllerTest {
           .andExpect(model().attributeExists("customers"));
  }
 
-
- private CustomerDTO sampleDto(Long id) {
-  CustomerDTO dto = new CustomerDTO();
-  dto.setId(id);
-  dto.setName("Anna Andersson");
-  dto.setEmail("anna@example.com");
-  dto.setPhone("0701234567");
-  dto.setSsn("850312-1234");
-  return dto;
- }
 
  @Test
  void showRegisterForm() throws Exception {
@@ -145,7 +144,7 @@ class CustomerControllerTest {
   dto.setId(1L);
   dto.setName("Uppdaterad Kund");
 
-  given(customerService.save(Mockito.any(CustomerDTO.class))).willReturn(dto);
+  given(customerService.save(any(CustomerDTO.class))).willReturn(dto);
 
   mockMvc.perform(post("/html/customer/edit")
                   .param("id", "1")
@@ -156,7 +155,7 @@ class CustomerControllerTest {
           .andExpect(status().is3xxRedirection())
           .andExpect(redirectedUrl("/html/Customerlist"));
 
-  verify(customerService).save(Mockito.any(CustomerDTO.class));
+  verify(customerService).save(any(CustomerDTO.class));
  }
 
  @Test
@@ -168,7 +167,7 @@ class CustomerControllerTest {
   savedCustomer.setPhone("0701234567");
   savedCustomer.setSsn("850101-1234");
 
-  given(customerService.save(Mockito.any(CustomerDTO.class))).willReturn(savedCustomer);
+  given(customerService.save(any(CustomerDTO.class))).willReturn(savedCustomer);
 
   mockMvc.perform(post("/html/Welcome")
                   .param("name", "Test Kund")
