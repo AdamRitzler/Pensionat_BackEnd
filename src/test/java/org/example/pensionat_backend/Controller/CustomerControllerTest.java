@@ -166,6 +166,27 @@ class CustomerControllerTest {
   verify(customerService).save(Mockito.any(CustomerDTO.class));
  }
 
+ @Test
+ void testCustomerRegSubmit_Valid() throws Exception {
+  CustomerDTO savedCustomer = new CustomerDTO();
+  savedCustomer.setId(1L);
+  savedCustomer.setName("Test Kund");
+  savedCustomer.setEmail("test@example.com");
+  savedCustomer.setPhone("0701234567");
+  savedCustomer.setSsn("850101-1234");
+
+  given(customerService.save(Mockito.any(CustomerDTO.class))).willReturn(savedCustomer);
+
+  mockMvc.perform(post("/html/Welcome")
+                  .param("name", "Test Kund")
+                  .param("email", "test@example.com")
+                  .param("phone", "0701234567")
+                  .param("ssn", "850101-1234"))
+          .andExpect(status().isOk())
+          .andExpect(view().name("Welcome"))
+          .andExpect(model().attributeExists("name", "email", "phone", "ssn", "id"));
+ }
+
 }
 
 
