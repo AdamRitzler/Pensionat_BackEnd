@@ -187,6 +187,15 @@ class CustomerControllerTest {
           .andExpect(model().attributeExists("name", "email", "phone", "ssn", "id"));
  }
 
+ @Test
+ void testCustomerRegSubmit_Invalid() throws Exception {
+  mockMvc.perform(post("/html/Welcome")
+                  .param("name", "") // ogiltigt
+                  .param("email", "fel"))
+          .andExpect(status().isOk())
+          .andExpect(view().name("CustomerReg"));
+ }
+
 }
 
 
