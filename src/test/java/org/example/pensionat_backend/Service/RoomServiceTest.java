@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,5 +98,12 @@ public class RoomServiceTest {
 
         List<Room> available = roomService.findAvailableRoomsFor(2, checkIn, checkOut);
         assertTrue(available.isEmpty());
+    }
+    @Test
+    void shouldFindRoomById() {
+        Optional<Room> foundRoom = roomService.findById(room.getId());
+
+        assertTrue(foundRoom.isPresent());
+        assertEquals(room.getRoomNumber(), foundRoom.get().getRoomNumber());
     }
 }

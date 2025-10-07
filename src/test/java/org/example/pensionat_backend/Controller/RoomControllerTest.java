@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,5 +44,18 @@ class RoomControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("rooms"))
                 .andExpect(model().attributeExists("rooms"));
+    }
+    @Test
+    void testShowAvailableRooms_InvalidDateRange() throws Exception {
+        LocalDate checkIn = LocalDate.now().plusDays(5);
+        LocalDate checkOut = LocalDate.now().plusDays(2);
+
+        mockMvc.perform(get("/rooms/search/results")
+                        .param("guests", "2")
+                        .param("checkIn", checkIn.toString())
+                        .param("checkOut", checkOut.toString()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("searchRooms"))
+                .andExpect(model().attributeExists("error"));
     }
 }
