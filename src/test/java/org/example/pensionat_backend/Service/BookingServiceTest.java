@@ -148,4 +148,33 @@ class BookingServiceTest {
         assertEquals(start.plusDays(2), updated.getStartDate());
         assertEquals(end.plusDays(3), updated.getEndDate());
     }
+    
+    @Test
+    void shouldFindBookingById() {
+        LocalDate start = LocalDate.now().plusDays(2);
+        LocalDate end = start.plusDays(2);
+
+        Booking created = bookingService.createBooking(testRoom.getId(), testCustomer.getId(), start, end);
+
+        var found = bookingService.findById(created.getId());
+
+        assertTrue(found.isPresent());
+        assertEquals(created.getId(), found.get().getId());
+    }
+    @Test
+    void shouldReturnLatestBookingForCustomerAndRoom() {
+        LocalDate start = LocalDate.now().plusDays(3);
+        LocalDate end = start.plusDays(2);
+
+        Booking created = bookingService.createBooking(testRoom.getId(), testCustomer.getId(), start, end);
+
+        var latest = bookingService.getLatestBookingForCustomerAndRoom(
+                testCustomer.getId(), testRoom.getId(), start, end
+        );
+
+        assertTrue(latest.isPresent());
+        assertEquals(created.getId(), latest.get().getId());
+    }
+
+
 }

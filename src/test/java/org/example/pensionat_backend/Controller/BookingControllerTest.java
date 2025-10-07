@@ -128,4 +128,43 @@ class BookingControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/book/cancel"));
     }
+    @Test
+    void testCreateBooking_InvalidDateRange() throws Exception {
+        mockMvc.perform(post("/book/create")
+                        .param("customerId", "1")
+                        .param("roomId", "1")
+                        .param("startDate", "2020-01-01") // förflutet datum
+                        .param("endDate", "2020-01-05"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/book/start?roomId=1"));
+    }
+    @Test
+    void testShowEditBookingList() throws Exception {
+        when(bookingService.getAllBookings()).thenReturn(List.of());
+        mockMvc.perform(get("/book/edit"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editBookingList"))
+                .andExpect(model().attributeExists("bookings"));
+    }
+    @Test
+    void testShowEditForm() throws Exception {
+        when(bookingService.getBookingById(1L)).thenReturn(Mockito.mock(org.example.pensionat_backend.DTO.BookingDTO.class));
+
+        mockMvc.perform(get("/book/edit/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("editBookingForm"))
+                .andExpect(model().attributeExists("booking"));
+    }
+    @Test
+    void testSaveBookingUpdate_Success() throws Exception {
+        mockMvc.perform(post("/book/edit")
+                        .param("id", "1")
+                        .param("customerId", "1")
+                        .param("roomId", "1")
+                        .param("startDate", "2030-01-01")
+                        .param("endDate", "2030-01-03"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/book/edit"));
+    }
+
 }
